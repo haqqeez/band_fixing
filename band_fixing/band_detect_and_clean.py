@@ -112,7 +112,7 @@ if __name__ == "__main__":
                 good_frame_idx.append(int(i+previous_videos_n_frames))
                 continue
 
-            if (img_similarity[int(i+previous_videos_n_frames)] < threshold) and not any([i==k for k in [0,1,2,3,4,5]]): # this is to exclude dropping TTL frames at the start of video 0
+            if img_similarity[int(i+previous_videos_n_frames)] < threshold:
                 bad_frame_idx.append(int(i+previous_videos_n_frames))
                 print(f'Potential bad frame #{int(i+previous_videos_n_frames)} r={(img_similarity[int(i+previous_videos_n_frames)]).round(2)}')
                 
