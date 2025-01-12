@@ -17,8 +17,10 @@ plot = False            		    # plot things
 codec = 'GREY'
 threshold = 0.96				    # set threshold value for detecting where bad frames occur
 
+preserve_beginning = 6			    # number of frames to preserve at the beginning of video 0.avi (e.g., for initial TTL pulse) set to zero to ignore
+
 ID='MYID' 					    # name date time of recording
-bad_frames_dir = '/lustre04/scratch/haqqeez/badV4/' # where to save bad frame png and pickle
+bad_frames_dir = '/lustre04/scratch/haqqeez/badV4_frames/' # where to save bad frame png and pickle
 main_videos_directory = ''			    # Miniscope directory to run analysis. Blank defaults to os.chdir()
 
 
@@ -101,11 +103,16 @@ if __name__ == "__main__":
             assert n_frames == 1000, f'Video {video} has {n_frames} instead of 1000!!'
 
         print(f'Computing frame-wise correlations betweeen {video}.avi and template image')
-        for i in np.arange(4,int(n_frames)): #start from 4 to avoid checking TTL frames at start
+        for i in np.arange(0,int(n_frames)): 
             img = cap.read()[1].sum(-1) # sum across colour channels
             img_similarity[int(i+previous_videos_n_frames)] = np.corrcoef(img.ravel(), temp_img.ravel())[0, 1]
 
-            if (img_similarity[int(i+previous_videos_n_frames)] < threshold) and not any([i==k for k in [0,1,2,3,4,5]]):
+            if video == 0 and i < preserve_beginning:
+                print(f'Preserving frame #{int(i+previous_videos_n_frames)} r={(img_similarity[int(i+previous_videos_n_frames)]).round(2)}')
+                good_frame_idx.append(int(i+previous_videos_n_frames))
+                continue
+
+            if (img_similarity[int(i+previous_videos_n_frames)] < threshold) and not any([i==k for k in [0,1,2,3,4,5]]): # this is to exclude dropping TTL frames at the start of video 0
                 bad_frame_idx.append(int(i+previous_videos_n_frames))
                 print(f'Potential bad frame #{int(i+previous_videos_n_frames)} r={(img_similarity[int(i+previous_videos_n_frames)]).round(2)}')
                 
