@@ -183,10 +183,8 @@ if __name__ == "__main__":
 
         for i in np.arange(cap.get(cv2.CAP_PROP_FRAME_COUNT)):
             ret, frame = cap.read()
-            if any([t==k for k in [0,1,2,3,4,5]]): # don't drop these beginning frames even if they are 'bad'
-                out.write(frame)
             # if the frame is in bad idx, drop it. Else write into video.
-            elif ret and any([t==k for k in bad_frame_idx]):  
+            if ret and any([t==k for k in bad_frame_idx]):  
                 # drop bad idx from timeStamps
                 print (f'dropping frame {t} from {bad_video_number}.avi and timeStamps.csv')
                 df.drop(axis=0, index=t, inplace=True)
