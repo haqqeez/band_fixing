@@ -193,6 +193,9 @@ if __name__ == "__main__":
             t += 1
         cap.release()
         out.release()
+    
+    # reset the indexing of df['Frame Number'] to be continuous
+    df['Frame Number'] = range(len(df))
     df.to_csv(os.path.join(clean_dir, "timeStamps.csv"), sep=",", index=False)
 
     if save:
